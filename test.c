@@ -27,7 +27,7 @@ typedef struct {
 PlayDetails current_song;
 
 SDL_AudioSpec sdl_audio_spec = {0};
-int sdl_sample_rate = 48000;
+int sdl_sample_rate = 49716;
 int sdl_samples = 4096;
 int sample_frame_size = 0;
 
@@ -228,6 +228,9 @@ void playPair(FILE* f) {
     switch(command) {
     case 0:
       del = param - 1;
+      if (param == 0) {
+        del = 255;
+      }
       break;
     case 2:
       if(!param) {

@@ -165,8 +165,8 @@ void OPLMixer::AddSamples_s32(Bitu frames, Bit32s *buffer)
 //How much to substract from the base value for the final attenuation
 static const Bit8u KslCreateTable[16] = {
 	//0 will always be be lower than 7 * 8
-	64, 32, 24, 19, 
-	16, 12, 11, 10, 
+	64, 32, 24, 19,
+	16, 12, 11, 10,
 	 8,  6,  5,  4,
 	 3,  2,  1,  0,
 };
@@ -190,7 +190,7 @@ static const Bit8u EnvelopeIncreaseTable[13] = {
 	4,  5,  6,  7,
 	8, 10, 12, 14,
 	16, 20, 24, 28,
-	32, 
+	32,
 };
 
 #if ( DBOPL_WAVE == WAVE_HANDLER ) || ( DBOPL_WAVE == WAVE_TABLELOG )
@@ -246,9 +246,9 @@ static Bit16u OpOffsetTable[64];
 //The lower bits are the shift of the operator vibrato value
 //The highest bit is right shifted to generate -1 or 0 for negation
 //So taking the highest input value of 7 this gives 3, 7, 3, 0, -3, -7, -3, 0
-static const Bit8s VibratoTable[ 8 ] = {	
-	1 - 0x00, 0 - 0x00, 1 - 0x00, 30 - 0x00, 
-	1 - 0x80, 0 - 0x80, 1 - 0x80, 30 - 0x80 
+static const Bit8s VibratoTable[ 8 ] = {
+	1 - 0x00, 0 - 0x00, 1 - 0x00, 30 - 0x00,
+	1 - 0x80, 0 - 0x80, 1 - 0x80, 30 - 0x80
 };
 
 //Shift strength for the ksl value determined by ksl strength
@@ -377,13 +377,13 @@ inline void Operator::UpdateRelease( const Chip* chip ) {
 		rateZero &= ~(1 << RELEASE);
 		if ( !(reg20 & MASK_SUSTAIN ) ) {
 			rateZero &= ~( 1 << SUSTAIN );
-		}	
+		}
 	} else {
 		rateZero |= (1 << RELEASE);
 		releaseAdd = 0;
 		if ( !(reg20 & MASK_SUSTAIN ) ) {
 			rateZero |= ( 1 << SUSTAIN );
-		}	
+		}
 	}
 }
 
@@ -479,7 +479,7 @@ Bits Operator::TemplateVolume(  ) {
 			return vol;
 		}
 		//In sustain phase, but not sustaining, do regular release
-	case RELEASE: 
+	case RELEASE:
 		vol += RateForward( releaseAdd );;
 		if ( GCC_UNLIKELY(vol >= ENV_MAX) ) {
 			volume = ENV_MAX;
@@ -506,13 +506,13 @@ INLINE Bitu Operator::ForwardVolume() {
 
 
 INLINE Bitu Operator::ForwardWave() {
-	waveIndex += waveCurrent;	
+	waveIndex += waveCurrent;
 	return waveIndex >> WAVE_SH;
 }
 
 void Operator::Write20( const Chip* chip, Bit8u val ) {
 	Bit8u change = (reg20 ^ val );
-	if ( !change ) 
+	if ( !change )
 		return;
 	reg20 = val;
 	//Shift the tremolo bit over the entire register, saved a branch, YES!
@@ -536,7 +536,7 @@ void Operator::Write20( const Chip* chip, Bit8u val ) {
 }
 
 void Operator::Write40( const Chip* /*chip*/, Bit8u val ) {
-	if (!(reg40 ^ val )) 
+	if (!(reg40 ^ val ))
 		return;
 	reg40 = val;
 	UpdateAttenuation( );
@@ -555,7 +555,7 @@ void Operator::Write60( const Chip* chip, Bit8u val ) {
 
 void Operator::Write80( const Chip* chip, Bit8u val ) {
 	Bit8u change = (reg80 ^ val );
-	if ( !change ) 
+	if ( !change )
 		return;
 	reg80 = val;
 	Bit8u sustain = val >> 4;
@@ -568,7 +568,7 @@ void Operator::Write80( const Chip* chip, Bit8u val ) {
 }
 
 void Operator::WriteE0( const Chip* chip, Bit8u val ) {
-	if ( !(regE0 ^ val) ) 
+	if ( !(regE0 ^ val) )
 		return;
 	//in opl3 mode you can always selet 7 waveforms regardless of waveformselect
 	Bit8u waveForm = val & ( ( 0x3 & chip->waveFormMask ) | (0x7 & chip->opl3Active ) );
@@ -603,7 +603,7 @@ INLINE void Operator::Prepare( const Chip* chip )  {
 		//Sign extend over the shift value
 		Bit32s neg = chip->vibratoSign;
 		//Negate the add with -1 or 0
-		add = ( add ^ neg ) - neg; 
+		add = ( add ^ neg ) - neg;
 		waveCurrent += add;
 	}
 }
@@ -831,7 +831,7 @@ void Channel::WriteC0( const Chip* chip, Bit8u val ) {
 		maskLeft = ( val & 0x10 ) ? -1 : 0;
 		maskRight = ( val & 0x20 ) ? -1 : 0;
 	//opl2 active
-	} else { 
+	} else {
 		//Disable updating percussion channels
 		if ( (fourMask & 0x40) && ( chip->regBD & 0x20 ) ) {
 
@@ -857,7 +857,7 @@ INLINE void Channel::GeneratePercussion( Chip* chip, Bit32s* output ) {
 	//BassDrum
 	Bit32s mod = (Bit32u)((old[0] + old[1])) >> feedback;
 	old[0] = old[1];
-	old[1] = Op(0)->GetSample( mod ); 
+	old[1] = Op(0)->GetSample( mod );
 
 	//When bassdrum is in AM mode first operator is ignoed
 	if ( chan->regC0 & 1 ) {
@@ -865,7 +865,7 @@ INLINE void Channel::GeneratePercussion( Chip* chip, Bit32s* output ) {
 	} else {
 		mod = old[0];
 	}
-	Bit32s sample = Op(1)->GetSample( mod ); 
+	Bit32s sample = Op(1)->GetSample( mod );
 
 
 	//Precalculate stuff used by other outputs
@@ -945,6 +945,8 @@ Channel* Channel::BlockTemplate( Chip* chip, Bit32u samples, Bit32s* output ) {
 			return (this + 2);
 		}
 		break;
+  default:
+    break;
 	}
 	//Init the operators with the the current vibrato and tremolo values
 	Op( 0 )->Prepare( chip );
@@ -978,12 +980,12 @@ Channel* Channel::BlockTemplate( Chip* chip, Bit32u samples, Bit32s* output ) {
 		} else if ( mode == sm2FM || mode == sm3FM ) {
 			sample = Op(1)->GetSample( out0 );
 		} else if ( mode == sm3FMFM ) {
-			Bits next = Op(1)->GetSample( out0 ); 
+			Bits next = Op(1)->GetSample( out0 );
 			next = Op(2)->GetSample( next );
 			sample = Op(3)->GetSample( next );
 		} else if ( mode == sm3AMFM ) {
 			sample = out0;
-			Bits next = Op(1)->GetSample( 0 ); 
+			Bits next = Op(1)->GetSample( 0 );
 			next = Op(2)->GetSample( next );
 			sample += Op(3)->GetSample( next );
 		} else if ( mode == sm3FMAM ) {
@@ -992,7 +994,7 @@ Channel* Channel::BlockTemplate( Chip* chip, Bit32u samples, Bit32s* output ) {
 			sample += Op(3)->GetSample( next );
 		} else if ( mode == sm3AMAM ) {
 			sample = out0;
-			Bits next = Op(1)->GetSample( 0 ); 
+			Bits next = Op(1)->GetSample( 0 );
 			sample += Op(2)->GetSample( next );
 			sample += Op(3)->GetSample( 0 );
 		}
@@ -1010,6 +1012,8 @@ Channel* Channel::BlockTemplate( Chip* chip, Bit32u samples, Bit32s* output ) {
 			output[ i * 2 + 0 ] += sample & maskLeft;
 			output[ i * 2 + 1 ] += sample & maskRight;
 			break;
+    default:
+      break;
 		}
 	}
 	switch( mode ) {
@@ -1057,7 +1061,7 @@ INLINE Bit32u Chip::ForwardNoise() {
 INLINE Bit32u Chip::ForwardLFO( Bit32u samples ) {
 	//Current vibrato value, runs 4x slower than tremolo
 	vibratoSign = ( VibratoTable[ vibratoIndex >> 2] ) >> 7;
-	vibratoShift = ( VibratoTable[ vibratoIndex >> 2] & 7) + vibratoStrength; 
+	vibratoShift = ( VibratoTable[ vibratoIndex >> 2] & 7) + vibratoStrength;
 	tremoloValue = TremoloTable[ tremoloIndex ] >> tremoloStrength;
 
 	//Check hom many samples there can be done before the value changes
@@ -1093,9 +1097,9 @@ void Chip::WriteBD( Bit8u val ) {
 		//Drum was just enabled, make sure channel 6 has the right synth
 		if ( change & 0x20 ) {
 			if ( opl3Active ) {
-				chan[6].synthHandler = &Channel::BlockTemplate< sm3Percussion >; 
+				chan[6].synthHandler = &Channel::BlockTemplate< sm3Percussion >;
 			} else {
-				chan[6].synthHandler = &Channel::BlockTemplate< sm2Percussion >; 
+				chan[6].synthHandler = &Channel::BlockTemplate< sm2Percussion >;
 			}
 		}
 		//Bass Drum
@@ -1163,7 +1167,7 @@ void Chip::WriteReg( Bit32u reg, Bit8u val ) {
 	switch ( (reg & 0xf0) >> 4 ) {
 	case 0x00 >> 4:
 		if ( reg == 0x01 ) {
-			waveFormMask = ( val & 0x20 ) ? 0x7 : 0x0; 
+			waveFormMask = ( val & 0x20 ) ? 0x7 : 0x0;
 		} else if ( reg == 0x104 ) {
 			//Only detect changes in lowest 6 bits
 			if ( !((reg104 ^ val) & 0x3f) )
@@ -1229,7 +1233,7 @@ Bit32u Chip::WriteAddr( Bit32u port, Bit8u val ) {
 	case 2:
 		if ( opl3Active || (val == 0x05) )
 			return 0x100 | val;
-		else 
+		else
 			return val;
 	}
 	return 0;
@@ -1305,7 +1309,7 @@ void Chip::Setup( Bit32u rate ) {
 		EnvelopeSelect( i, index, shift );
 		//Original amount of samples the attack would take
 		Bit32s original = (Bit32u)( (AttackSamplesTable[ index ] << shift) / scale);
-		 
+
 		Bit32s guessAdd = (Bit32u)( scale * (EnvelopeIncreaseTable[ index ] << ( RATE_SH - shift - 3 )));
 		Bit32s bestAdd = guessAdd;
 		Bit32u bestDiff = 1 << 30;
@@ -1317,7 +1321,7 @@ void Chip::Setup( Bit32u rate ) {
 				count += guessAdd;
 				Bit32s change = count >> RATE_SH;
 				count &= RATE_MASK;
-				if ( GCC_UNLIKELY(change) ) { // less than 1 % 
+				if ( GCC_UNLIKELY(change) ) { // less than 1 %
 					volume += ( ~volume * change ) >> 3;
 				}
 				samples++;
@@ -1439,7 +1443,7 @@ void InitTables( void ) {
 	for ( int i = 0; i < 256; i++ ) {
 		WaveTable[ 0x700 + i ] = i * 8;
 		WaveTable[ 0x6ff - i ] = ((Bit16s)0x8000) | i * 8;
-	} 
+	}
 #endif
 
 	//	|    |//\\|____|WAV7|//__|/\  |____|/\/\|
@@ -1461,7 +1465,7 @@ void InitTables( void ) {
 		WaveTable[ 0xb00 + i ] = WaveTable[ 0x000 + i * 2 ];
 		WaveTable[ 0xe00 + i ] = WaveTable[ 0x200 + i * 2 ];
 		WaveTable[ 0xf00 + i ] = WaveTable[ 0x200 + i * 2 ];
-	} 
+	}
 #endif
 
 	//Create the ksl table

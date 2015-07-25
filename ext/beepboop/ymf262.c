@@ -13,7 +13,7 @@
 
  11-18-2014: version 0.3.3
  - 'per channel' sample output buffers can be skipped by pointing buffers_chan to NIL/NULL
- 
+
  07-03-2014: version 0.3.2
  - experimental treating of ADSR envelope restart when Attack Rate = 0
 
@@ -715,7 +715,7 @@ INLINE void advance(OPL3 *chip)
           {
             op->volume += eg_inc[op->eg_sel_dr + ((chip->eg_cnt>>op->eg_sh_dr)&7)];
 
-            if ( op->volume >= op->sl )
+            if ( op->volume >= (int)op->sl )
               op->state = EG_SUS;
 
           }
@@ -1569,7 +1569,9 @@ static void OPL3WriteReg(OPL3 *chip, int r, int v)
   signed int *chanout = chip->chanout;
   unsigned int ch_offset = 0;
   int slot;
-  int block_fnum;
+  unsigned int block_fnum;
+
+  double interval;
 
   if(r&0x100)
   {
@@ -1643,7 +1645,6 @@ static void OPL3WriteReg(OPL3 *chip, int r, int v)
   r &= 0xff;
   v &= 0xff;
 
-
   switch(r&0xe0)
   {
     case 0x00:  /* 00-1f:control */
@@ -1675,14 +1676,14 @@ static void OPL3WriteReg(OPL3 *chip, int r, int v)
             if(chip->st[0])
             {
               chip->TC[0]=chip->T[0]*20;
-              double interval = (double)chip->T[0]*chip->TimerBase;
+              interval = (double)chip->T[0]*chip->TimerBase;
               if (chip->TimerHandler) (chip->TimerHandler)(chip->TimerParam+0,interval);
             }
             /* timer 2 */
             if(chip->st[1])
             {
               chip->TC[1]=chip->T[1]*20;
-              double interval =(double)chip->T[1]*chip->TimerBase;
+              interval = (double)chip->T[1]*chip->TimerBase;
               if (chip->TimerHandler) (chip->TimerHandler)(chip->TimerParam+1,interval);
             }
           }

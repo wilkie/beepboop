@@ -1,0 +1,48 @@
+GIT
+  remote: git://github.com/wilkie/nice-ffi.git
+  revision: cae55aba86050fda3efb1c7287fc18f85bcd1809
+  specs:
+    nice-ffi (0.4)
+      ffi (>= 1.0.0)
+
+GIT
+  remote: git://github.com/wilkie/ruby-sdl-ffi.git
+  revision: 6f84fb50b0eba99e6d06630a20bc2f87eeffbc8b
+  specs:
+    ruby-sdl-ffi (0.4)
+      nice-ffi (>= 0.2)
+
+PATH
+  remote: .
+  specs:
+    blooper (0.0.1)
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+    ansi (1.5.0)
+    ffi (1.9.10-x86-mingw32)
+    metaclass (0.0.4)
+    minitest (4.7.0)
+    mocha (1.1.0)
+      metaclass (~> 0.0.1)
+    rake (10.4.2)
+    turn (0.9.7)
+      ansi
+      minitest (~> 4)
+
+PLATFORMS
+  x86-mingw32
+
+DEPENDENCIES
+  ansi
+  blooper!
+  minitest (= 4.7.0)
+  mocha
+  nice-ffi!
+  rake
+  ruby-sdl-ffi!
+  turn
+
+BUNDLED WITH
+   1.10.6

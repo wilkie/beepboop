@@ -250,8 +250,6 @@ void playPair(FILE* f) {
       break;
     }
   } while((command || setspeed) && !feof(f));
-
-  return;
 }
 
 void playRAW(const char* filename) {

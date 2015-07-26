@@ -2576,6 +2576,7 @@ void YMF262UpdateOne(int which, INT16 *buffer, INT16 *buffers_chan[], int length
   UINT8 rhythm = chip->rhythm&0x20;
   signed int *chanout = chip->chanout;
   INT16 a_ch_swap,b_ch_swap;
+  int i, idx;
 
   /* mapping of channels from OPL3 emulator to real channels */
   static const int CHAN_MAPPING_TABLE[18] = {
@@ -2586,7 +2587,7 @@ void YMF262UpdateOne(int which, INT16 *buffer, INT16 *buffers_chan[], int length
     9,11,13,    // 4op (register set #2) - 2nd pair
     15,16,17 }; // (fixed) 2op channels
 
-  for(int i=0; i < length ; i++ )
+  for(i=0; i < length ; i++ )
   {
     int a,b;
     int a_ch[18],b_ch[18];
@@ -2660,7 +2661,7 @@ void YMF262UpdateOne(int which, INT16 *buffer, INT16 *buffers_chan[], int length
     a = 0;
     b = 0;
 
-    for(int idx=0; idx < 18 ; idx++ )
+    for(idx=0; idx < 18 ; idx++ )
     {
       a += chanout[idx] & chip->pan[idx*4+0];
       b += chanout[idx] & chip->pan[idx*4+1];
@@ -2787,7 +2788,7 @@ void YMF262UpdateOne(int which, INT16 *buffer, INT16 *buffers_chan[], int length
     /* store to 'per channel' sound buffers */
     if (buffers_chan)
     {
-      for(int idx=0; idx < 18 ; idx++ )
+      for(idx=0; idx < 18 ; idx++ )
       {
         *buffers_chan[idx]++=(INT16)a_ch[idx];
         *buffers_chan[idx]++=(INT16)b_ch[idx];

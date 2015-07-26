@@ -15,10 +15,10 @@ void Init_beepboop() {
   VALUE cBeepboop = rb_define_module("Beepboop");
   VALUE cOPL      = rb_define_class_under(cBeepboop, "OPL", rb_cObject);
 
-  rb_define_method(cOPL, "init", &rb_opl_init, 1);
-  rb_define_method(cOPL, "uninit", &rb_opl_uninit, 0);
-  rb_define_method(cOPL, "write", &rb_opl_write, 2);
-  rb_define_method(cOPL, "sample", &rb_opl_sample, 2);
+  rb_define_method(cOPL, "init", &rb_beepboop_opl_init, 1);
+  rb_define_method(cOPL, "uninit", &rb_beepboop_opl_uninit, 0);
+  rb_define_method(cOPL, "write", &rb_beepboop_opl_write, 2);
+  rb_define_method(cOPL, "sample", &rb_beepboop_opl_sample, 2);
 }
 
 /* Pass throughs for the various operations we require */

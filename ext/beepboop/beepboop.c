@@ -95,14 +95,14 @@ VALUE rb_beepboop_opl_sample(VALUE self, VALUE stream, VALUE numSamples) {
 
   /* if stream is an FFI::Pointer, then pull out the address and use that */
   VALUE cFFI        = rb_define_module("FFI");
-  int hasFFIPointer = FIX2INT(rb_const_defined(cFFI, rb_intern("Pointer")));
+  int hasFFIPointer = rb_const_defined(cFFI, rb_intern("Pointer")) == Qtrue;
   int isFFIPointer  = 0;
 
   short* stream_ptr = NULL;
 
   if (hasFFIPointer) {
     VALUE cFFIPointer = rb_const_get(cFFI, rb_intern("Pointer"));
-    isFFIPointer  = FIX2INT(rb_obj_is_instance_of(stream, cFFIPointer));
+    isFFIPointer  = rb_obj_is_instance_of(stream, cFFIPointer) == Qtrue;
   }
 
   if (isFFIPointer) {

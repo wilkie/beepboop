@@ -38,7 +38,9 @@ module Beepboop
 
     def stop
       self.pause
+      @done = false
       @buffer.rewind
+      @player.reset(@buffer)
     end
 
     def done?
@@ -55,7 +57,7 @@ module Beepboop
 
     def callback(userdata, stream, length)
       begin
-        @player.sample(@buffer, stream, length)
+        @done = !@player.sample(@buffer, stream, length)
       rescue Exception => e
         puts e.backtrace
         puts e

@@ -24,7 +24,17 @@ module Beepboop
         @opl = Beepboop::OPL.new(sample_rate)
         @sample_rate = sample_rate
 
-        self.reset
+        self.reset(stream)
+      end
+
+      def reset(stream)
+        @opl.reset
+
+        @skip = 0
+        @speed = 0
+        @minicnt = 0
+
+        @done = false
 
         # Skip past the signature
         stream.read(8)
@@ -33,24 +43,9 @@ module Beepboop
         @speed = stream.read(2).unpack("S")[0]
       end
 
-      def reset
-        @opl.reset
-
-        @skip = 0
-        @speed = 0
-        @minicnt = 0
-
-        @done = false
-      end
-
       # Reads from the input stream, writes to the output stream the number of
       # bytes requested.
       def sample(stream, output, length)
-        puts output.address
-        #ifdef USE_DOSBOX_OPL
-        #  DBOPL::OPLMixer oplmixer((int16_t*)output);
-        #endif
-
         if @done
           return false
         end
@@ -65,28 +60,17 @@ module Beepboop
 
           refresh = 1193180.0 / (@speed > 0 ? @speed : 0xffff).to_f
 
-          i = (@minicnt / refresh + 4).to_i & ~3
-          if (towrite < i)
-            i = towrite
+          numSamples = (@minicnt / refresh + 4).to_i & ~3
+          if (towrite < numSamples)
+            numSamples = towrite
           end
 
-          #ifdef USE_DOSBOX_OPL
-          #    dbopl_device.Generate(&oplmixer, i);
-          #elif defined(USE_YMF262_OPL)
-          #    YMF262UpdateOne(ymf262_device_id, stream_pos, nil, i);
-          #else
-          #    YM3812UpdateOne(fmopl_device, output, i);
-          #    // Duplicate channels
-          #    i.downto 1 do |p|
-          #      output.put_uint8(p*2-1, output.get_uint8(p-1))
-          #      output.put_uint8(p*2-2, output.get_uint8(p-1))
-          #    end
-          #endif
+          @opl.sample(output, numSamples)
 
-          output += (i * 2 * 2) # 2 channels * 2 bytes per sample
-          towrite -= i
+          output += (numSamples * 2 * 2) # 2 channels * 2 bytes per sample
+          towrite -= numSamples
 
-          @minicnt -= (refresh * i).to_i
+          @minicnt -= (refresh * numSamples).to_i
         end
 
         true
@@ -108,7 +92,11 @@ module Beepboop
           return
         end
 
-        return if stream.eof?
+        if stream.eof?
+          @done = true
+        end
+
+        return if (stream.eof? || @done)
 
         loop do
           setspeed = false
@@ -131,8 +119,9 @@ module Beepboop
             end
           when 0xff
             if param == 0xff
-              puts "END OF SONG"
+              # END OF SONG command
               @done = true
+
               return
             end
           else

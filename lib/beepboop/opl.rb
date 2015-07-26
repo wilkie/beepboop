@@ -6,19 +6,19 @@ module Beepboop
   # passing along a buffer to write the audio waveform data to.
   class OPL
     # (This is implemented in ext/beepboop/beepboop.c)
-    def initialize(sample_rate)
-    end
+    #def initialize(sample_rate)
+    #end
 
     # (This is implemented in ext/beepboop/beepboop.c)
-    def write(register, data)
-    end
+    #def write(register, data)
+    #end
 
     # (This is implemented in ext/beepboop/beepboop.c)
-    def reset()
-    end
+    #def reset()
+    #end
 
     # (This is implemented in ext/beepboop/beepboop.c)
-    def sample(output, numSamples)
-    end
+    #def sample(output, numSamples)
+    #end
   end
 end

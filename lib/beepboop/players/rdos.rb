@@ -125,6 +125,31 @@ module Beepboop
               return
             end
           else
+            if command >= 0x40 && command <= 0x55
+              instrument = command & 0x1f
+              keyscale = param >> 6
+              output   = param & 0x3f
+              puts "#{instrument} Key Scale Level = #{keyscale}"
+              puts "#{instrument} Output Level    = #{output}"
+            end
+            if command >= 0x60 && command <= 0x75
+              instrument = command & 0x1f
+              attack = param >> 4
+              decay  = param & 0xf
+              puts "#{instrument} Attack Rate     = #{attack}"
+              puts "#{instrument} Decay Rate      = #{decay}"
+            end
+            if command >= 0x80 && command <= 0x95
+              instrument = command & 0x1f
+              sustain = param >> 4
+              release = param & 0xf
+              puts "#{instrument} Sustain Level   = #{sustain}"
+              puts "#{instrument} Release Level   = #{release}"
+            end
+            if command >= 0xe0 && command <= 0xf5
+              instrument = command & 0x1f              
+              puts "#{instrument} Waveform Select = #{param & 0x7}"
+            end
             @opl.write(command, param)
           end
           break if ((command == 0 && setspeed == false) || stream.eof?)
